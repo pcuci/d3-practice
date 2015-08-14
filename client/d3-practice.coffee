@@ -100,12 +100,38 @@ Template.Chart.rendered = ->
     30
     45
     15
+    52
+    23
+    52
+    30
+    45
+    15
+    2
+    52
+    23
+    52
+    30
+    45
+    15
+    5
+    50
   ]
 
   height = 400
   width = 600
   barWidth = 50
   barOffset = 5
+
+  yScale = d3.scale.linear()
+    .domain([0, d3.max(bardata)])
+    .range([0, height])
+  xScale = d3.scale.ordinal()
+    .domain(d3.range(0, bardata.length))
+    .rangeBands([0, width])
+
+  colors = d3.scale.linear()
+    .domain([0, d3.max(bardata)])
+    .range(['#665555','#FD4400'])
 
   d3.select('div#chartBar')
     .append('svg')
@@ -116,14 +142,14 @@ Template.Chart.rendered = ->
         .data(bardata)
         .enter()
         .append('rect')
-        .style('fill', '#C61C6F')
-        .attr('width', barWidth)
+        .style('fill', colors)
+        .attr('width', xScale.rangeBand())
         .attr('height', (d) ->
-          d
+          yScale(d)
         )
         .attr('x', (d, i) ->
-          i * (barWidth + barOffset)
+          xScale(i)
         )
         .attr('y', (d) ->
-          height - d
+          height - yScale(d)
         )
