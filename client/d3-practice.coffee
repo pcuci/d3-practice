@@ -34,7 +34,7 @@ Template.Chart.rendered = ->
     color: '#268BD2'
   ,
     width: 100
-    name: "Paul Cuci"
+    name: "Paul C"
     color: "#819090"
   ,
     width: 100
@@ -50,7 +50,7 @@ Template.Chart.rendered = ->
     color: "#475B62"
   ,
     width: 100
-    name: "Boombastic New"
+    name: "Boom New"
     color: "#0A2933"
   ]
   # d3.selectAll('.item')
@@ -89,12 +89,6 @@ Template.Chart.rendered = ->
       .attr('height', 200)
       .attr('width', 200)
       .style('fill', '#CB4B19')
-  d3.select('svg')
-    .append('circle')
-      .attr('cx', '400')
-      .attr('cy', '200')
-      .attr('r', '50')
-      .style('fill', '#840043')
 
   bardata = []
   d3.tsv('data.tsv', (data) ->
@@ -135,7 +129,7 @@ Template.Chart.rendered = ->
       .attr('width', width + margin.right + margin.left)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
-        .attr('transform', 'translate(' + margin.left + ', ' + margin.right + ')')
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
         .style('background', '#C9D7D6')
           .selectAll('rect')
           .data(bardata)
@@ -286,7 +280,7 @@ Template.Chart.rendered = ->
     )
 
   w = 900
-  h = 400
+  h = 600
   circleWidth = 8
   fontFamily = "Bree Serif"
   fontSizeHighlight = "1.5em"
@@ -310,21 +304,95 @@ Template.Chart.rendered = ->
     yellowgreen: "#738A05"
 
   nodes = [
-    name: "Parent"
+    name: "Accomplishing"
+    target: [1, 2, 3, 4, 5, 6]
   ,
-    name: "child1"
+    name: "Using"
+    target: [0, 2, 3, 4, 5, 6]
   ,
-    name: "child2"
+    name: "Feeling"
+    target: [0, 1, 3, 4, 5, 6]
+  ,
+    name: "Receiving"
+    target: [0, 1, 2, 4, 5, 6]
+  ,
+    name: "Stressing"
+    target: [0, 1, 2, 3, 5, 6]
+  ,
+    name: "Doing"
+    target: [0, 1, 2, 3, 4, 6]
+  ,
+    name: "Reacting"
+    target: [0, 1, 2, 3, 4, 5]
+  ,
+    name: "working"
+    target: [0, 8, 9, 10]
+  ,
+    name: "studying"
+    target: [0, 7, 9, 10]
+  ,
+    name: "cleaning"
+    target: [0, 7, 8, 9]
+  ,
+    name: "answering calls"
     target: [0]
   ,
-    name: "child3"
-    target: [0]
-  ,
-    name: "child4"
+    name: "alcohol"
     target: [1]
   ,
-    name: "child5"
-    target: [0, 1, 2, 3]
+    name: "caffeine"
+    target: [1]
+  ,
+    name: "pot"
+    target: [1]
+  ,
+    name: "tired"
+    target: [2]
+  ,
+    name: "down"
+    target: [2]
+  ,
+    name: "irritable"
+    target: [2]
+  ,
+    name: "poor sleep"
+    target: [2]
+  ,
+    name: "poor focus"
+    target: [2]
+  ,
+    name: "anxious"
+    target: [2]
+  ,
+    name: "worry"
+    target: [2]
+  ,
+    name: "CBT"
+    target: [3]
+  ,
+    name: "Celexa20"
+    target: [3]
+  ,
+    name: "Wellbutrin150"
+    target: [3]
+  ,
+    name: "exercise"
+    target: [4]
+  ,
+    name: "socializing"
+    target: [4]
+  ,
+    name: "relationship"
+    target: [5]
+  ,
+    name: "school"
+    target: [5]
+  ,
+    name: "family"
+    target: [5]
+  ,
+    name: "work"
+    target: [5]
    ]
   links = []
   for node in nodes
@@ -342,8 +410,8 @@ Template.Chart.rendered = ->
   force = d3.layout.force()
     .nodes(nodes)
     .links([])
-    .gravity(0.1)
-    .charge(-1000)
+    .gravity(0.2)
+    .charge(-500)
     .size([w, h])
   link = vis.selectAll(".link")
     .data(links).enter()
@@ -389,32 +457,32 @@ Template.Chart.rendered = ->
     d.name
   )
   .attr("x", (d, i) ->
-    if i > 0
+    if i > 6
       circleWidth + 5
     else
       -10
   )
   .attr("y", (d, i) ->
-    if i > 0
+    if i > 6
       circleWidth + 0
     else
       8
   )
   .attr("font-family", "Bree Serif")
   .attr("fill", (d, i) ->
-    if i > 0
-      palette.paleryellow
+    if i > 6
+      palette.purple
     else
       palette.yellowgreen
   )
   .attr("font-size", (d, i) ->
-    if i > 0
+    if i > 6
       "1em"
     else
       "1.8em"
   )
   .attr "text-anchor", (d, i) ->
-    if i > 0
+    if i > 6
       "beginning"
     else
       "end"
@@ -434,5 +502,29 @@ Template.Chart.rendered = ->
       )
       .attr "y2", (d) ->
         d.target.y
-
   force.start()
+Template.Network.rendered = ->
+  width = 960
+  height = 500
+  svg = d3.select("svg#network").attr("width", width).attr("height", height)
+  force = d3.layout.force().gravity(.05).distance(100).charge(-100).size([ width, height ])
+  d3.json "network.json", (error, json) ->
+    throw error if error
+    force.nodes(json.nodes).links(json.links).start()
+    link = svg.selectAll(".link").data(json.links).enter().append("line").attr("class", "link")
+    node = svg.selectAll(".node").data(json.nodes).enter().append("g").attr("class", "node").call(force.drag)
+    node.append("text").attr("dx", 12).attr("dy", ".35em").text (d) ->
+      d.name
+
+    force.on "tick", ->
+      link.attr("x1", (d) ->
+        d.source.x
+      ).attr("y1", (d) ->
+        d.source.y
+      ).attr("x2", (d) ->
+        d.target.x
+      ).attr "y2", (d) ->
+        d.target.y
+
+      node.attr "transform", (d) ->
+        "translate(" + d.x + "," + d.y + ")"

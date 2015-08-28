@@ -10,3 +10,19 @@
 .bigger {
   font-size: 150%
 }
+
+#network {
+  .node {
+    stroke: #000;
+  }
+  .node text {
+    font: 13px sans-serif;
+    color: black;
+    stroke: none;
+  }
+
+  .link {
+    stroke: #bbb;
+    stroke-opacity: .6;
+  }
+}
